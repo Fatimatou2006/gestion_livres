@@ -6,7 +6,9 @@ RUN apt-get update && apt-get install -y \
     git \
     unzip \
     libzip-dev \
-    && docker-php-ext-install pdo pdo_mysql zip
+    libpng-dev \
+    libonig-dev \
+    && docker-php-ext-install pdo pdo_mysql zip mbstring
 
 RUN a2enmod rewrite
 
@@ -16,7 +18,12 @@ COPY --from=composer:latest /usr/bin/composer /usr/bin/composer
 
 RUN composer install --no-dev --optimize-autoloader
 
+# Configuration Apache pour Laravel
+COPY 000-default.conf /etc/apache2/sites-available/000-default.conf
 RUN chown -R www-data:www-data storage bootstrap/cache
+
+RUN php artisan config:clear || true
+RUN php artisan cache:clear || true
 
 EXPOSE 80
 
