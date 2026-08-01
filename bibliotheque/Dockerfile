@@ -21,7 +21,8 @@ RUN composer install --no-dev --optimize-autoloader
 # Configuration Apache pour Laravel
 COPY 000-default.conf /etc/apache2/sites-available/000-default.conf
 RUN chown -R www-data:www-data storage bootstrap/cache
-
+RUN chmod -R 775 storage bootstrap/cache
+RUN chmod -R 777 storage bootstrap/cache
 RUN php artisan config:clear || true
 RUN php artisan cache:clear || true
 
